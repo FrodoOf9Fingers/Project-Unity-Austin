@@ -1,66 +1,56 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
-public class NetworkManager : MonoBehaviour {
+public class NetworkManager : MonoBehaviour
+{
 
-    private const string typeName = "Unity Austin";
-    private const string gameName = "Austin";
-    private HostData[] hostList;
+    [SerializeField] Text connectionText;
+    [SerializeField] Transform[] spawnPoints;
+    [SerializeField] Camera sceneCamera;
 
-    //If needed, we can create a local Master Server
-    //MasterServer.ipAddress = "127.0.0.1";
+    GameObject player;
 
-    /*Start the server for 2 players on port 25000*/
-    void StartServer () {
-        //TODO: allow for multiple users, talk about and find a good port to use
-        Network.InitializeServer(2, 25000, !Network.HavePublicAddress());
-        MasterServer.RegisterHost(typeName, gameName);
-	}
-
-    /*Log a message if the server starts correctly*/
-    void OnServerInitialized()
+    void Start()
     {
-        Debug.Log("Server Initializied");
+        PhotonNetwork.autoJoinLobby = true;
+        PhotonNetwork.logLevel = PhotonLogLevel.Full;
+        PhotonNetwork.ConnectUsingSettings("0.2");
+
     }
 
-    /*Create a button if the user is neither a client nor a server to start the server*/
-    void OnGUI()
+    void Update()
     {
-        if (!Network.isClient && !Network.isServer)
-        {
-            if (GUI.Button(new Rect(100, 100, 250, 100), "Start Server"))
-                StartServer();
-
-            if (GUI.Button(new Rect(100, 250, 250, 100), "Refresh Hosts"))
-                RefreshHostList();
-
-            if (hostList != null)
-            {
-                for (int i = 0; i < hostList.Length; i++)
-                {
-                    if (GUI.Button(new Rect(400, 100 + (110 * i), 300, 100), hostList[i].gameName))
-                        JoinServer(hostList[i]);
-                }
-            }
-        }
-    }
-    private void RefreshHostList()
-    {
-        MasterServer.RequestHostList(typeName);
+        connectionText.text = PhotonNetwork.connectionStateDetailed.ToString();
     }
 
-    void OnMasterServerEvent(MasterServerEvent msEvent)
+    void OnJoinedLobby()
     {
-        if (msEvent == MasterServerEvent.HostListReceived)
-            hostList = MasterServer.PollHostList();
-    }
-    private void JoinServer(HostData hostData)
-    {
-        Network.Connect(hostData);
+        RoomOptions ro = new RoomOptions() { isVisible = true, maxPlayers = 10 };
+        PhotonNetwork.JoinOrCreateRoom("Joseph", ro, TypedLobby.Default);
     }
 
-    void OnConnectedToServer()
+    void OnJoinedRoom()
     {
-        Debug.Log("Server Joined");
+        StartSpawnProcess(0f);
+    }
+
+    void StartSpawnProcess(float respawnTime)
+    {
+        sceneCamera.enabled = true;
+        StartCoroutine("SpawnPlayer", respawnTime);
+    }
+
+    IEnumerator SpawnPlayer(float respawnTime)
+    {
+        yield return new WaitForSeconds(respawnTime);
+
+        int index = Random.Range(0, spawnPoints.Length);
+        player = PhotonNetwork.Instantiate("Player",
+                                           spawnPoints[index].position,
+                                           spawnPoints[index].rotation,
+                                           0);
+        player.GetComponent<PlayerNetworkMover>().RespawnMe += StartSpawnProcess;
+        sceneCamera.enabled = false;
     }
 }
