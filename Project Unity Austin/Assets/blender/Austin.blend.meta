@@ -1,10 +1,52 @@
 fileFormatVersion: 2
 guid: 4dada91083e34ff4da015d58649abda2
+<<<<<<< HEAD
 timeCreated: 1447204906
 licenseType: Free
 ModelImporter:
   serializedVersion: 18
   fileIDToRecycleName: {}
+=======
+timeCreated: 1447197923
+licenseType: Free
+ModelImporter:
+  serializedVersion: 18
+  fileIDToRecycleName:
+    100000: 208
+    100002: //RootNode
+    100004: floor_001
+    100006: walls
+    100008: Plane
+    100010: Plane_001
+    100012: top
+    400000: 208
+    400002: //RootNode
+    400004: floor_001
+    400006: walls
+    400008: Plane
+    400010: Plane_001
+    400012: top
+    2300000: 208
+    2300002: floor_001
+    2300004: walls
+    2300006: Plane
+    2300008: Plane_001
+    2300010: top
+    3300000: 208
+    3300002: floor_001
+    3300004: walls
+    3300006: Plane
+    3300008: Plane_001
+    3300010: top
+    4300000: floor_001
+    4300002: 208
+    4300004: walls
+    4300006: Plane_001
+    4300008: Plane
+    4300010: top
+    7400000: Default Take
+    9500000: //RootNode
+>>>>>>> 6a2ab738e7ac5e984a3779549a624e83a05b0796
   materials:
     importMaterials: 1
     materialName: 0
